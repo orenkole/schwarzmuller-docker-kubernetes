@@ -254,4 +254,19 @@ We need `-i` because of interactive mode
 `docker rmi <image id>` - remove image. Can be removed only if not use by any container (including stopped containers)
 `docker image prune -a` - remove all unused images
 
+## Removing stopped containers automatically
+`docker run -p 3000:80 -d --rm <image name>`
+`--rm` - remove container once stopped
 
+## A Look Behind the Scenes: Inspecting Images
+`docker image inspect <image id>`
+
+## Copying Files Into & From A Container
+Copy files between containers and localhost
+copy files into a running container 
+`cp <path copy from> <container name>:/<path to copy to>`
+Might be useful for configuration files
+
+or out of container
+`cp <container name>:/<path to copy to> <path copy from>`
+Might be useful for log files
