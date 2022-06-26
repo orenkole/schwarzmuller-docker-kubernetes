@@ -10,3 +10,5 @@ app.get('/', (req, res) => {
 await connectToDatabase()
 
 app.listen(3000);
+
+app.post('/store-goal', (req, res) => {

@@ -79,3 +79,5 @@ https://hub.docker.com/_/node
 
 `docker run -it node` - expose containers terminal (command)
 `-it` - interactive mode - expose containers mode
+
+## Building our own Image with a Dockerfile
