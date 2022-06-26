@@ -239,9 +239,19 @@ We can't input into container, we're not in interactive mode:
 `docker run -it <image id>`
 
 ---
-To start a container that we can typy to container's input, we can start in _attached_ mode
+To start a container that we can type to container's input, we can start in _attached_ mode
 `docker start -a <container name>`  
-But behavior is strange: we can input only once
+Behavior is strange: we can input only once
 
 We need `-i` because of interactive mode
 `docker start -ai <container name>`
+
+## Deleting Images & Containers
+`docker ps -a` - list all containers
+`docker rm <container name>` - remove container (can remove only stopped container)
+`docker container prune` - remove all stopped containers
+`docker images` - list all images
+`docker rmi <image id>` - remove image. Can be removed only if not use by any container (including stopped containers)
+`docker image prune -a` - remove all unused images
+
+
