@@ -207,3 +207,41 @@ _attached_ mode - we listen to the output of the container, we see logs of conta
 `-f` - follow mode
 
 `docker start -a <container name>` - start container in attached mode
+
+## Entering interactive mode
+```python
+from random import randint
+
+min_number = int(input('Please enter the min number:'))
+max_number = int(input('Please enter the max number:'))
+
+if(max_number < min_number):
+  print('Invalid input')
+else:
+  rnd_number = randint(min_number, max_number)
+  print(rnd_number)
+```
+
+```dockerfile
+FROM python
+WORKDIR /app
+COPY . /app
+CMD ["python", "rng.py"]
+```
+`docker run build .`
+We can't input into container, we're not in interactive mode:
+![img.png](eim-1.png)
+
+`docker run --help`
+`-i` - interactive mode. Container will listen to input
+`-t` - allocate pseudo TTY. Container will provide input
+
+`docker run -it <image id>`
+
+---
+To start a container that we can typy to container's input, we can start in _attached_ mode
+`docker start -a <container name>`  
+But behavior is strange: we can input only once
+
+We need `-i` because of interactive mode
+`docker start -ai <container name>`
