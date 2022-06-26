@@ -81,3 +81,103 @@ https://hub.docker.com/_/node
 `-it` - interactive mode - expose containers mode
 
 ## Building our own Image with a Dockerfile
+```dockerfile
+COPY . /app
+```
+first `.` - path to copy from starting from location of Dockerfile
+second `/app` - where to store inside image
+
+---
+by default commands run from root folder of the image
+We have to specify _WORKDIR_ - set where commands should run from. All subsequent commands will be executed from inside specified path
+```dockerfile
+WORKDIR /app
+RUN npm install
+```
+
+Also, since we changed our working directory, we can copy to /app by:
+```dockerfile
+COPY . ./
+```
+here second `.` is now `/app`.
+This is equivalent to specifying absolute path:
+```dockerfile
+COPY . /app
+```
+It's better to use absolute paths
+
+---
+_RUN_ - commands to create an image
+_CMD_ - commands to start in the container
+
+_CMD_ - execute command when the container is started
+
+If we don't specify _CMD_ , the _CMD_ of base image will be executed. If not _CMD_ in base image, we get an error
+
+---
+
+Container is isolated from our local machine
+We must explicitly expose
+
+_Dockerfile_ (all)
+```dockerfile
+FROM node
+
+WORKDIR /app
+
+COPY . /app
+
+RUN npm install
+
+EXPOSE 80
+
+CMD ["node", "server.js"]
+```
+
+## Running a Container based on our own Image
+Build and run:
+`docker build .` - create image based on Dockerfile (command)
+`docker run <image id>`
+
+stop container:
+`docker ps
+docker stop <image name>`
+
+`docker ps -a` - see all containers
+
+---
+```dockerfile
+EXPOSE 80
+```
+Just tells which port should be exposed
+
+To be able to access port, we must use flag `-p` in console
+`docker run -p 3000:80 <image name>`
+
+## Images are read-only
+When we change code form which we build image, we must build a completely new image
+`docker build .`
+
+## Understanding image layers
+Every instruction creates layer
+Only commands which have changes due to changes are executed, all previous steps in Dockerfile skipped, They are cached
+
+Optimization: 
+copy package.json => install => copy rest of code
+
+```dockerfile
+FROM node
+
+WORKDIR /app
+
+COPY package.json /app
+
+RUN npm install
+
+COPY . /app
+
+EXPOSE 80
+
+CMD ["node", "server.js"]
+```
+
