@@ -181,3 +181,29 @@ EXPOSE 80
 CMD ["node", "server.js"]
 ```
 
+## Managing images and containers
+
+![img.png](notes-images/miac-1.png)
+
+`docker --help`\
+`--help` - see help on command\
+
+## Stopping & restarting containers
+`docker run <image name>` - running new container\
+`docker stop <container name>`\
+`docker start <container name>` - reuse already built container
+
+## Understanding Attached & Detached Containers
+(commands):
+`docker start <container name>` - start already existing container in _detached_ mode  
+`docker attach <container name>` - attach already existing and running container
+
+`docker run -p 3000:80 <image name>` - start new container in _attached_ mode  
+`docker run -p 3000:80 -d <image name>` - start new container in _detached_ mode  
+_attached_ mode - we listen to the output of the container, we see logs of container in real time
+
+`docker logs <container name>` - see containers previous logs
+`docker logs -f <container name>` - see containers logs in real time
+`-f` - follow mode
+
+`docker start -a <container name>` - start container in attached mode
