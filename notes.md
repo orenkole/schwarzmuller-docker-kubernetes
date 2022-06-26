@@ -49,7 +49,7 @@ do:
 docker build .
 docker run -p 3000:3000 <image id>`  (command)
 `-p` - publish port
-![img.png](gettings-our-hands-dirty-1.png)
+![img.png](notes-images/gettings-our-hands-dirty-1.png)
 
 `docker ps` - list containers (command)
 `docker stop <image name>` - stop container (command)
@@ -230,7 +230,7 @@ CMD ["python", "rng.py"]
 ```
 `docker run build .`
 We can't input into container, we're not in interactive mode:
-![img.png](eim-1.png)
+![img.png](notes-images/eim-1.png)
 
 `docker run --help`
 `-i` - interactive mode. Container will listen to input
@@ -270,3 +270,25 @@ Might be useful for configuration files
 or out of container
 `cp <container name>:/<path to copy to> <path copy from>`
 Might be useful for log files
+
+## Naming & Tagging Containers and Images
+`docker run --help`
+`--name`
+`docker run -p 3000:80 -d --rm --name <container name> <image id>`
+
+`docker run -p 3000:80 -d --rm --name goalsapp vds897v9f8sd`
+now we can use name:
+`docker start goalsapp`
+
+---
+name for images are tags:
+`name:tag`
+`docker build -t <name>:<tag> .`
+
+![img.png](notes-images/ntcai-1.png)
+`docker build -t goals:latest .`
+
+## Sharing images: overview
+![img.png](notes-images/sio-1.png)
+## Pushing images to dockerhub
+![img.png](notes-images/pitd-1.png)
