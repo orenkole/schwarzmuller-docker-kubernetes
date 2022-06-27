@@ -292,3 +292,17 @@ name for images are tags:
 ![img.png](notes-images/sio-1.png)
 ## Pushing images to dockerhub
 ![img.png](notes-images/pitd-1.png)
+https://hub.docker.com/
+create repository
+
+give local image a name:
+1) or build image again with given tag
+2) we can make clone of existing image:
+`docker tag <image name|id> <new image name (same as repository name)>`
+   
+login to repository:
+`docker login --usernma <docker username>`
+
+push to repository
+`docker push <new image name>`
+
