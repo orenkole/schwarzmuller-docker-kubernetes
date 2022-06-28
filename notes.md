@@ -328,3 +328,72 @@ https://dockerlabs.collabnix.com/docker/cheatsheet/
 ## Understanding Data Categories / Different Kinds of Data
 
 ![img.png](notes-images/understanding-data-1.png)
+
+add new project _data_volumes_
+
+## Building & Understanding the Demo App
+
+```dockerfile
+FROM node:14
+WORKDIR /app
+COPY package.json /app
+RUN npm install
+COPY . /app
+EXPOSE 80
+CMD ["node", "server.js"]
+```
+build image:
+`docker build -t feedback-node .` -
+
+run container:
+`docker run feedback-node -p 3000:80 -d --name feedback-app --rm feedback-node`
+
+go to localhost:3000
+localhost:3000/feedback/<title>.html - see feedback
+
+## Understanding the Problem
+
+`docker stop feedback-app` when with `--rm`, we must recreate container and our file 'awesome.txt' is deleted  
+
+We start new container without `--rm`:
+`docker run feedback-node -p 3000:80 -d --name feedback-app feedback-node`
+When stopping container without `--rm` the file is not deleted
+
+Containers built on the same image are isolated from each other
+We have to save data in such a way that it survived container deletion
+
+## Introducing volumes
+
+Volumes are folders not in the container but on the host machine which are mapped into containers (mounted)  
+It's a two direction connection 
+Volumes allow to persist data when container is removed  
+
+## A First, Unsuccessful Try
+
+In our app _feedback_ folder we want to persist  
+Add instruction:
+```dockerfile
+VOLUME ["/app/feedback"]
+```
+
+`docker buid -t feedback-node:volumes .`
+`docker run -d -p 3000:80 --rm --name feedback-app feedback-node:volumes`
+
+---
+
+Try to create feedback and we see error: _cross device link is not permitted_
+This is because of `fs.rename` method because of `VOLUME` in docker will move the file outside or the container  
+We can replace to
+```javascript
+await fs.copyFile(tempFilePath, finalFilePath);
+await fs.unlink(tempFilePath);
+```
+Now we must delete our image and rebuild it
+`docker rmi feedback-node:volumes`
+`docker build -t feedback-node:volumes .`
+
+create container with `--rm`
+`docker run -d -p 3000:80 --rm --name feedback-app feedback-node:volumes`
+Still data is not persisted for different containers
+
+
