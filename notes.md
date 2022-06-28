@@ -397,3 +397,29 @@ create container with `--rm`
 Still data is not persisted for different containers
 
 
+## Named Volumes To The Rescue!
+
+List volumes
+`docker volume ls`
+![img.png](named-volumes-1.png)
+Anonymous volumes exist as long as a container exists
+We'll come back later where anonymous volumes can be helpful
+For now we'll checkout _named_volumes_
+
+Named volumes survive container remove
+
+We don't create named volumes in Dockerfile
+
+We create them in console while creating container
+Remove `VOLUME` from Dockerfile
+
+Create container with named volume `-v feedback:/app/feedback`  
+Named volumes are not deleted when the container shuts down  
+create new image:
+`docker rmi feedback-node:volumes`
+` docker build -t feedback-node:volumes .`
+`docker run -d -p 3000:80 --rm --name feedback-app -v feedback:/app/feedback feedback-node:volumes`
+
+After this if we create new container with the same volume name, data will persist after new container creation with the same volume name
+
+
