@@ -586,3 +586,11 @@ Build two images with different args:
 ---
 
 Good to place ARG after `RUN npm install`
+
+## Module summary
+
+![img.png](notes-images/ms-volumes-1.png)
+
+
+## Case 1: Container to WWW Communication
+
