@@ -401,7 +401,7 @@ Still data is not persisted for different containers
 
 List volumes
 `docker volume ls`
-![img.png](named-volumes-1.png)
+![img.png](notes-images/named-volumes-1.png)
 Anonymous volumes exist as long as a container exists
 We'll come back later where anonymous volumes can be helpful
 For now we'll checkout _named_volumes_
@@ -417,9 +417,41 @@ Create container with named volume `-v feedback:/app/feedback`
 Named volumes are not deleted when the container shuts down  
 create new image:
 `docker rmi feedback-node:volumes`
-` docker build -t feedback-node:volumes .`
+`docker build -t feedback-node:volumes .`
 `docker run -d -p 3000:80 --rm --name feedback-app -v feedback:/app/feedback feedback-node:volumes`
 
 After this if we create new container with the same volume name, data will persist after new container creation with the same volume name
+
+---
+
+Note: we don't know path to volumes on our machine  
+## Getting Started With Bind Mounts (Code Sharing)
+
+Problem: Changes on our source code are note reflected in running container. We must rebuild image
+
+![img.png](notes-images/bind-mount-1.png)
+For bind mounts we define the path on our host machine. To do so, we need second `-v` flag:
+`docker run -d -p 3000:80 --rm --name feedback-app -v feedback:/app/feedback -v "/Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/data-volumes:/app" feedback-node:volumes`
+
+And make sure folder is accessible by docker
+![img.png](notes-images/bind-mount-2.png)
+
+But we see that container is immediately stopped (run without `--rm`)
+`docker logs feedback-app`
+![img.png](notes-images/bind-mount-3.png)
+
+## Combining & Merging Different Volumes
+Problem with uninstalled packeges:
+1) we execute Dockerfile and install dependencies
+2) our bind mount replaces all content of image with our local content without installed depenedencies
+
+We need to tell docker some parts should not be overwritten
+
+Solution add another anonymous volume (without `:`) to cli:
+`docker run -d -p 3000:80 --rm --name feedback-app -v feedback:/app/feedback -v "/Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/data-volumes:/app" -v /app/node_modules feedback-node:volumes`
+
+Here the more specific path `/app/node_modules` of 3rd -v wins over `/app` of 2nd -v
+
+Now recreate container and now if we change source code and reload page, we cen see changes on our web page without rebuilding image  
 
 
