@@ -479,3 +479,36 @@ recreate container:
 
 Now server should restart automatically whenever we change our source code for server
 
+---
+
+Note: for windows there it is not working like this
+
+## Volumes & bind mounts: overview
+
+![img.png](notes-images/volumes_&_bind_mounts-1.png)
+![img.png](notes-images/volumes_&_bind_mounts-2.png)
+
+## A Look at Read-Only Volumes
+add `:ro`, `-v /app/temp` - to be able to write to /temp
+`docker run -d -p 3000:80 --rm --name feedback-app -v feedback:/app/feedback -v "/Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/data-volumes:/app:ro" -v /app/temp -v /app/node_modules feedback-node:volumes`
+
+## Managing Docker Volumes
+
+List volumes:
+`docker volume ls`
+
+We can create volume and use it in our subesequently created container:
+`docker volume create feedback-filed`
+
+Inspect volume 
+`docker volume inspect feedback`
+
+Delete unused volume in running container:
+`docker volume rm feedback-files`
+
+Remove all unused volumes:
+`docker volume prune`
+
+Anonymous volumes are removed if their container is removed
+
+
