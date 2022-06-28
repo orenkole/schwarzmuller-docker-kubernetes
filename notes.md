@@ -511,4 +511,14 @@ Remove all unused volumes:
 
 Anonymous volumes are removed if their container is removed
 
+## Using "COPY" vs Bind Mounts
+
+We bind mount during development to reflect our changes instantly
+
+On the production server there is no connected source code that updates while it running  
+That's why we create snapshot containers of our code with:
+```dockerfile
+COPY . .
+```
+
 
