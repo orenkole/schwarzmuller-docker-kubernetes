@@ -289,7 +289,8 @@ name for images are tags:
 `docker build -t goals:latest .`
 
 ## Sharing images: overview
-![img.png](notes-images/sio-1.png)
+![img.png](notes-images/sio-1.png)  
+
 ## Pushing images to dockerhub
 ![img.png](notes-images/pitd-1.png)
 https://hub.docker.com/
@@ -306,3 +307,24 @@ login to repository:
 push to repository
 `docker push <new image name>`
 
+## Pulling & Using Shared Images
+Pull latest image
+`docker pull <image name>`
+
+If image doesn't exist locally, it will be downloaded:
+`docker run <image name>`
+
+## Module summary
+
+![img.png](notes-images/ms-1.png)
+![img.png](notes-images/ms-2.png)
+https://dockerlabs.collabnix.com/docker/cheatsheet/
+
+## Module introduction
+- understanding different kinds of data
+- images, containers & volumes
+- using arguments & environment variables
+
+## Understanding Data Categories / Different Kinds of Data
+
+![img.png](notes-images/understanding-data-1.png)
