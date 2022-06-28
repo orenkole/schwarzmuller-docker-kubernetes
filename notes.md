@@ -454,4 +454,28 @@ Here the more specific path `/app/node_modules` of 3rd -v wins over `/app` of 2n
 
 Now recreate container and now if we change source code and reload page, we cen see changes on our web page without rebuilding image  
 
+## A NodeJS-specific Adjustment: Using Nodemon in a Container
+
+_package.jsons_
+```json
+"scripts": {
+  "start": "nodemon server.js"
+},
+"devDependencies": {
+  "nodemon": "2.0.4"
+}
+```
+
+_Dockerfile_
+```javascript
+CMD ["npm", "start"]
+```
+
+recreate container:
+`docker rm feedback-app`
+`docker rmi feedback-node:volumes`
+`docker build -t feedback-node:volumes .`
+`docker run -d -p 3000:80 --rm --name feedback-app -v feedback:/app/feedback -v "/Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/data-volumes:/app" -v /app/node_modules feedback-node:volumes`
+
+Now server should restart automatically whenever we change our source code for server
 
