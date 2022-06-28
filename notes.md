@@ -521,4 +521,45 @@ That's why we create snapshot containers of our code with:
 COPY . .
 ```
 
+## Don't COPY Everything: Using "dockerignore" Files
+_.dockerignore_  
+`node_modules`  
 
+## Working with Environment Variables & ".env" Files
+
+![img.png](notes-images/working-with-environment-1.png)
+
+_server.js_  
+```javascript
+app.listen(process.env.PORT);
+```
+
+_Dockerfile_
+```dockerfile
+ENV PORT 80
+EXPOSE $PORT
+```
+
+`docker build feedback-node:env .`
+`docker run -d -p 3000:80 --rm --name feedback-app -v feedback:/app/feedback -v "/Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/data-volumes:/app:ro" -v /app/temp -v /app/node_modules feedback-node:env`
+
+Advantage:
+This is default value:
+```dockerfile
+ENV PORT 80
+```
+
+We can run container with different value `--env PORT=8000` (also expose internal port `3000:8000`)
+`docker run -d -p 3000:8000 --env PORT=8000 --rm --name feedback-app -v feedback:/app/feedback -v "/Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/data-volumes:/app:ro" -v /app/temp -v /app/node_modules feedback-node:env`
+
+`-e` is equal to `--env`
+
+---
+
+Using file for environment variable `--env-file .env`:
+_.env_  
+```dockerfile
+PORT=8000
+```
+
+`docker run -d -p 3000:8000 --env-file .env --rm --name feedback-app -v feedback:/app/feedback -v "/Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/data-volumes:/app:ro" -v /app/temp -v /app/node_modules feedback-node:env`
