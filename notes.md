@@ -563,3 +563,26 @@ PORT=8000
 ```
 
 `docker run -d -p 3000:8000 --env-file .env --rm --name feedback-app -v feedback:/app/feedback -v "/Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/data-volumes:/app:ro" -v /app/temp -v /app/node_modules feedback-node:env`
+
+## Using Build Arguments (ARG)
+
+If we want to make
+```dockerfile
+ENV PORT 80
+```
+flexible as well so that we can change default port during building image
+
+```dockerfile
+ARG DEFAULT_PORT=80
+...
+ENV PORT $DEFAULT_PORT
+```
+value of _ARG_ can be used only inside Dockerfile, but not on all commands (can't use on _CMD_)
+
+Build two images with different args:
+`docker build -t feedback-node:web-app .`
+`docker built -t feedback-node:dev --build-arg DEFAULT_PORT=8000 .`
+
+---
+
+Good to place ARG after `RUN npm install`
