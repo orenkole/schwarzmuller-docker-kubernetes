@@ -593,4 +593,50 @@ Good to place ARG after `RUN npm install`
 
 
 ## Case 1: Container to WWW Communication
+request to swapi
+## Case 2: Container to Local Host Machine Communication
 
+## Case 3: Container to Container Communication
+
+## Creating a Container & Communicating to the Web (WWW)
+Note: mongodb is not a part of container
+`docker build -t favorites-node .`
+`docker run --name favorites --rm -p 3000:3000 favorites-node`
+Error: unable to connect to mongodb running on local machine (Max installed and ran)  
+
+![img.png](www-1.png)
+
+On the other hand, we can send requests to external apis  
+**Out of the box containers can send requests to www**
+
+## Making Container to Host Communication Work
+replace `localhost` with `host.docker.internal`
+```javascript
+mongoose.connect(
+    'mongodb://host.docker.internal:27017/swfavorites',
+```
+
+## Container to Container Communication: A Basic Solution
+`docker run -d --name mongodb mongo`
+We'll pull official image from dockerhub
+
+`docker container inspect mongodb`
+"Ports": {
+"27017/tcp": null
+},
+"IPAddress": "172.17.0.2",
+
+_app.js_
+```javascript
+mongoose.connect(
+  'mongodb://172.17.0.2:27017/swfavorites',
+```
+
+rebuild image
+`docker build -t favorites-node .`
+
+run containers
+`docker run --name favorites -d --rm -p 3000:3000 favorites-node`
+
+we'll get 2 running containers
+![img.png](www-2.png)
