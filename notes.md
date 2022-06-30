@@ -604,13 +604,13 @@ Note: mongodb is not a part of container
 `docker run --name favorites --rm -p 3000:3000 favorites-node`
 Error: unable to connect to mongodb running on local machine (Max installed and ran)  
 
-![img.png](www-1.png)
+![img.png](notes-images/www-1.png)
 
 On the other hand, we can send requests to external apis  
 **Out of the box containers can send requests to www**
 
 ## Making Container to Host Communication Work
-replace `localhost` with `host.docker.internal`
+replace `localhost` with `host.docker.internal` to be able to send requests from container to our host machine
 ```javascript
 mongoose.connect(
     'mongodb://host.docker.internal:27017/swfavorites',
@@ -639,4 +639,49 @@ run containers
 `docker run --name favorites -d --rm -p 3000:3000 favorites-node`
 
 we'll get 2 running containers
-![img.png](www-2.png)
+![img.png](notes-images/www-2.png)
+
+send request to localhost:3000/favorites
+and we'll get our favorites array
+
+Problem: we have to look up the ip address and hardcode it
+
+## Introducing Docker Networks: Elegant Container to Container Communication
+
+We can put containers in the same network:
+![img_2.png](notes-images/docker-network-1.png)
+
+First we have to create network
+Create network (command):
+`docker network create <network name>`
+run: 
+`docker network create favorites-net`
+
+list networks:
+`docker network ls`
+
+recreate mongodb container:
+`docker run -d --name mongodb --network favorites-net mongo`
+
+Containers from the same network are able to communicate by name
+Now we can put container's name in place of localhost
+```javascript
+mongoose.connect(
+  'mongodb://mongodb:27017/swfavorites',
+```
+Rebuild image:
+`docker build -t favorites-node .`
+Start our app's container:
+` docker run --name favorites --network favorites-net -d --rm -p 3000:3000 favorites-node`
+
+---
+![img.png](notes-images/docker-network-2.png)
+
+---
+
+Note: for mongodb we didn't write PORT because it's necessary outside the network
+
+## How Docker Resolves IP Addresses
+
+## Our Target App & Setup
+
