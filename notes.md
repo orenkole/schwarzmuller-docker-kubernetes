@@ -724,3 +724,34 @@ we need `-p 80:80` too
 
 Now our frontend is able to query backend
 
+## Moving the React SPA into a Container
+_/fronend/Dockerfile_
+```dockerfile
+FROM node
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+`docker build -t goals-react .`
+`docker run --name goals-frontend --rm -d -p 3000:3000 goals-react`
+
+Our container stopping immediately after start
+We need to run it in interactive mode with `-it` to tell there will be some interaction
+`docker run --name goals-frontend --rm -p 3000:3000 -it goals-react`
+
+---
+
+For now our containers are able to communicate because we showed their ports `-p`
+We'll put them all in one network
+
+---
+
+`docker stop goals-frontend`
+`docker stop goals-node`
+`docker stop mongodb`
+
+
+
