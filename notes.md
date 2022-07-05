@@ -692,4 +692,35 @@ Note: for mongodb we didn't write PORT because it's necessary outside the networ
 
 Now we are able to connect to mongodb like from node app
 
+## Dockerizing the Node App
+
+_Dockerfile_
+```dockerfile
+FROM node
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+EXPOSE 80
+CMD ["node", "app.js"]
+```
+`docker build -t goals-node .`
+`docker run --name goals-backend --rm goals-node`
+ 
+change `localhost` to `host.docker.internal`
+_app.js_
+```javascript
+mongoose.connect(
+  'mongodb://host.docker.internal:27017/course-goals',
+  
+```
+
+---
+
+Our frontend cannot connect to backed because `EXPOSE 80` is not enough
+we need `-p 80:80` too
+`docker stoop goals-node`
+`docker run --name goals-backend --rm -d -p 80:80 goals-node`
+
+Now our frontend is able to query backend
 
