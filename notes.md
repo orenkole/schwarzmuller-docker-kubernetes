@@ -684,4 +684,12 @@ Note: for mongodb we didn't write PORT because it's necessary outside the networ
 ## How Docker Resolves IP Addresses
 
 ## Our Target App & Setup
+![img.png](notes-images/our_targe_app_setup-1.png)
+
+## Dockerizing the MongoDB Service
+`docker contianers prune`
+`docker run --name mongodb --rm -d -p 27017:27017 mongo`
+
+Now we are able to connect to mongodb like from node app
+
 
