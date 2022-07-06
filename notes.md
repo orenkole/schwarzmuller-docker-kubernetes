@@ -753,5 +753,49 @@ We'll put them all in one network
 `docker stop goals-node`
 `docker stop mongodb`
 
+## Adding Docker Networks for Efficient Cross-Container Communication
+`docker network create goals-network`
 
+now start containers without `-p`
+`docker run --name mongodb --rm -d --network goals-network mongo`
+
+For backend container make some changes:
+```javascript
+mongoose.connect(
+  'mongodb://host.docker.internal:27017/course-goals',
+```
+to using name of container `mongodb`:
+```javascript
+mongoose.connect(
+  'mongodb://mongodb:27017/course-goals',
+```
+because now we don't expose port, but run in network 
+rebuild image:
+`docker build -t goals-node .`
+`docker run --name goals-backend --rm -d --network goals-network goals-node`
+
+For frontend we also need to rename host:
+```javascript
+const response = await fetch('http://localhost/goals');
+```
+to:
+```javascript
+const response = await fetch('http://goals-backend/goals');
+```
+rebuild image:
+
+`docker run --name goals-frontend --rm -d --network goals-network -p 3000:3000 -it goals-react`
+
+![img.png](adding-docker-network-1.png)
+
+This is because our code runs in the browser and browser doesn't know about `http://goals-backend/goals`
+We must return to `localhost` and to ensure that endpoints can be reached
+We need to publish PORT 80 on backend application. 
+
+`goals stop fronend`
+`docker run --name goals-frontend --rm -d -p 3000:3000 -it goals-react`
+note: here we don't set _network_ becuase it is not in docker invironment
+
+Restart backend container with `network` to communicate to mongodb and with published port  `-p` for frontedn to be able to send requests
+`docker run --name goals-backend --rm -d -p 80:80 --network goals-network goals-node`
 
