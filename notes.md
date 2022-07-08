@@ -1045,11 +1045,34 @@ services:
 #      MONGO_INITDB_ROOT_PASSWORD: secret
     env_file:
       - ./env/mongo.env
-    networks:
-      - goals-network
 #  backend:
 #  frontend:
 
 volumes:
   data:
+```
+
+## Docker Compose Up & Down
+Command to pull and build images that are required and start all services (containers):
+`docker-compose up`  
+
+Check:  
+remove all images  
+`docker image prune -a`
+stop all containers  
+`docker kill $(docker ps -q)`  
+delete all containers:  
+`docker container prune`  
+
+`docker-compose up` by default starts in attached mode  
+`docker-compose up -d` - start in detached mode  
+
+Stop all containers, remove all containers and so on (command):  
+```
+docker-compose down
+```
+
+Note: it doesn't remove volumes. To remove volumes add `-v`:  
+```
+docker-compose down -v
 ```
