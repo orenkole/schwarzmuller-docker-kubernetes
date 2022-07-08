@@ -9,8 +9,6 @@ services:
 #      MONGO_INITDB_ROOT_PASSWORD: secret
     env_file:
       - ./env/mongo.env
-    networks:
-      - goals-network
 #  backend:
 #  frontend:
 
