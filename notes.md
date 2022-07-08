@@ -935,3 +935,121 @@ node_modules
 .git
 Dockerfile
 ```
+
+## Module Summary
+Problems: 
+- we have very long docker run commands
+- project optimized for development
+
+# Section 6. Docker Composer: elegant multi-container orchestration
+
+## Module Introduction
+Problem: we have very long docker run commands
+
+![img.png](notes-images/6-module-introduction-1.png)
+
+Solution: docker-compose
+
+## Docker-Compose: What & Why?
+
+![img.png](notes-images/6-docker-compose-what-1.png)
+![img.png](notes-images/6-docker-compose-what-2.png)
+![img.png](notes-images/6-docker-compose-what-3.png)
+
+## Creating a Compose File
+
+`version` - docker compose specification version. docker copose is in active development
+
+https://docs.docker.com/compose/compose-file/compose-versioning/#compatibility-matrix
+
+`services` - needs at least 1 children. List of containers. To label containers we can choose at our choice
+
+## Diving into the Compose File Configuration
+
+Our run command was:
+```
+docker run \  
+    --name mongodb  \  
+    -v data:/data/db  \  
+    --rm  \  
+    -d \  
+    --network goals-network \  
+    -e MONGO_INITDB_ROOT_USERNAME=max \  
+    -e MONGO_INITDB_ROOT_PASSWORD=secret \  
+    mongo
+```  
+
+`mongo` =>  `image: mongo` - could be an image, URL of image in repository  
+`--rm` -By default when we use compose, service is removed when shuted down, so we don't need
+
+`-v data:/data/db`
+=>
+```yml
+    volumes:
+      - data:/data/db
+```
+
+```yml
+    -e MONGO_INITDB_ROOT_USERNAME=max \  
+    -e MONGO_INITDB_ROOT_PASSWORD=secret \ 
+```
+=>
+```yml
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: max
+      MONGO_INITDB_ROOT_PASSWORD: secret
+```
+note: `:` creates yml object, and since, we don't need `-` in front of the line  
+or
+```yml
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=max
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+```
+or
+_/env/mongo.env_
+```yml
+MONGO_INITDB_ROOT_USERNAME=max
+MONGO_INITDB_ROOT_PASSWORD=secret
+```
+```yml
+    env_file:
+      - ./env/mongo.env
+```
+
+`--network goals-network`
+=>
+```yml
+    networks: 
+      - goals-network
+```
+We can specify network, but we don't need to do this, because out of the box composer creates new environment for all services listed
+It will add all services to this network out of the box
+
+For **named volumes** we need to add a section for volumes.  
+Without any value.  
+Such named volumes can be shared between services.  
+Unnamed volumes and bind mounts shouldn't be listed in `volumes`  
+
+Now we have composer for mongodb:  
+_docker-compose.yml_
+```yml
+version: "3.8"
+services:
+  mongodb:
+    image: 'mongo'
+    volumes:
+      - data:/data/db
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: max
+#      MONGO_INITDB_ROOT_PASSWORD: secret
+    env_file:
+      - ./env/mongo.env
+    networks:
+      - goals-network
+#  backend:
+#  frontend:
+
+volumes:
+  data:
+```
