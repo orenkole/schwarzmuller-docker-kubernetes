@@ -912,8 +912,26 @@ cli message:
 
 add dockerignore
 _.dockerignore_
-```javascript
+```
 node_modules
 Dockerfile
 .git
+```
+
+## Live Source Code Updates for the React Container (with Bind Mounts)
+We'll use bind mount
+
+`docker run -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/docker-complete/frontend/src/app/src --name goals-frontend --rm -d -p 3000:3000 -it goals-react`
+We don't need nodemon - react is already configured to hot reload
+----
+
+Note: windows users need to use linux file system
+
+---
+
+Add dockerignore:
+```
+node_modules
+.git
+Dockerfile
 ```
