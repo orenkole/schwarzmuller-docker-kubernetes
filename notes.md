@@ -799,3 +799,121 @@ note: here we don't set _network_ becuase it is not in docker invironment
 Restart backend container with `network` to communicate to mongodb and with published port  `-p` for frontedn to be able to send requests
 `docker run --name goals-backend --rm -d -p 80:80 --network goals-network goals-node`
 
+## Adding Data Persistence to MongoDB with Volumes
+For now if we stop `docker stop mongodb` the data is lost
+
+See documentation
+
+https://hub.docker.com/_/mongo (Where to Store Data)
+`data` - give a name to a created named volume (we don't know where it is on our host machine), `/data/db` - path inside container to database  
+`-v data:/data/db`  
+
+`docker stop mongodb`
+`docker run --name mongodb -v data:/data/db --rm -d -network goals-network mongo`
+
+Now data survives mongodb container stop
+
+---
+
+Authentication (https://hub.docker.com/_/mongo)
+image also supports `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD`for creating a simple user with the role root in the admin authentication database, as described in the Environment Variables section above.
+
+`docker run --name mongodb -v data:/data/db --rm -d --network goals-network -e MONGO_INITDB_ROOT_USERNAME=max -e MONGO_INITDB_ROOT_PASSWORD=secret mongo`
+    
+Now in backend container we must use login and password
+_/backend/app.js_
+```javascript
+mongoose.connect(
+  'mongodb://max:secret@mongodb:27017/course-goals?authSource=admin',
+```
+`docker stop goals-backend`
+`docker build -t goals-node .`
+`docker run --name goals-backend --rm -p 80:80 --network goals-network goals-node`  
+
+Problem occured: https://www.udemy.com/course/docker-kubernetes-the-practical-guide/learn/lecture/22626647/#questions/13014650
+Solution: delete old volume
+
+terminal: `CONNECTED TO MONGODB`
+
+## Volumes, Bind Mounts & Polishing for the NodeJS Container
+We want:
+- our logs to persist 
+- our source code updates live  
+
+`-v logs:/app/logs` For logs we'll use named volumes - thus, we won't have easy access to log data like with _binded mount_  
+
+`-v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/docker-complete/backend:/app`
+For source code we'll use _bind mount_ for live updates  
+
+`-v /app/node_modules` We have to ensure that _node_modules_ in our container is not erased because we don't have _node_modules_ in our host machine, so it's path must be more specific  
+
+`docker run --name goals-backend -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/docker-complete/backend:/app -v logs:/app/logs -v /app/node_modules -d --rm -p 80:80 --network goals-network goals-node`
+
+---
+
+Add nodemon to update code live
+- Delete package.lock.json in /backend
+
+_/backend/package.json
+```json
+"scripts": {
+  "start": "nodemon app.js"
+}
+"devDependencies": {
+  "nodemon": "^2.0.4"
+}
+```
+_Dockerfile_
+```dockerfile
+CMD ["node", "app.js"]
+```
+change to:
+```dockerfile
+CMD ["npm", "start"]
+```
+
+`docker stop goals-backend`
+`docker build -t goals-node .`
+`docker run --name goals-backend -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/docker-complete/backend:/app -v logs:/app/logs -v /app/node_modules -d --rm -p 80:80 --network goals-network goals-node`
+
+Now we have live updates:
+_/backend/app.js_
+```javascript
+      console.log('CONNECTED TO MONGODB!!');
+```
+`docker logs goals-backend`
+
+---
+
+Move environment variables for mongodb login and password to docker file
+_/backend/Dockerfile_
+```dockerfile
+ENV MONGODB_USERNAME=root
+ENV MONGODB_PASSWORD=secret
+```
+
+_app.js_
+```javascript
+mongoose.connect(
+  `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@mongodb:27017/course-goals?authSource=admin`,
+```
+`docker built -t goals-node .`
+`docker stop goals-backend`
+
+The default values for `MONGODB_USERNAME` will not work, because these are not what we set in mongodb.
+`docker run --name mongodb -v data:/data/db --rm -d --network goals-network -e MONGO_INITDB_ROOT_USERNAME=max -e MONGO_INITDB_ROOT_PASSWORD=secret mongo`
+We should add environment variable in our command
+`docker run --name goals-backend -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/docker-complete/backend:/app -v logs:/app/logs -v /app/node_modules -e MONGODB_USERNAME=max -d --rm -p 80:80 --network goals-network goals-node`
+
+cli message:
+`CONNECTED TO MONGODB!!`
+
+---
+
+add dockerignore
+_.dockerignore_
+```javascript
+node_modules
+Dockerfile
+.git
+```
