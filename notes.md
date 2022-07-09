@@ -1456,7 +1456,7 @@ _docker-compose.yml_ (composer part):
       context: ./dockerfiles
       dockerfile: composer.dockerfile
     volumes:
-      - ./src:var/www/html
+      - ./src:/var/www/html
 ```
 
 ---
@@ -1487,5 +1487,15 @@ services:
       context: ./dockerfiles
       dockerfile: composer.dockerfile
     volumes:
-      - ./src:var/www/html
+      - ./src:/var/www/html
 ```
+
+## Creating a Laravel App via the Composer Utility Container
+
+Run individual composer utility container to create laravel project:  
+`composer` - name of our service  
+rest - command that is executable inside composer container  
+`docker-compose run --rm composer create-project --prefer-dist laravel/laravel .`
+
+Root project will be created in container inside WORKDIR and thanks to bind mount will be reflected in the _src_ folder on our host machine  
+
