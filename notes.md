@@ -1576,3 +1576,54 @@ For now docker compose doesn't rebuild our images
 We want docker compose to evaluate our dockerfiles and build images if it changed
 
 `docker-compose up -d --build server`
+
+---
+
+Note: some fixes in commit "Finally works. Launching Only Some Docker Compose Services"
+![img.png](notes-images/laravel-2.png)
+![img.png](notes-images/laravel-1.png)
+
+## Adding More Utility Containers
+We need artisan to handle laravel commands, like populate databse with initial data 
+
+For artisan we can use dockerfile of php, but just add _entrypoint_
+_/var/www/html/artisan_ - a utility program that can do a lot of staff  
+
+_docker-compose.yml_ (artisan & npm)  
+```yml
+  artisan:
+    build:
+      context: .
+      dockerfile: dockerfiles/php.dockerfile
+    volumes:
+      - ./src:/var/www/html
+    entrypoint: ["php", "/var/www/html/artisan"]
+  npm:
+    image: node:14
+    working_dir: /var/www/html
+    entrypoint: ["npm"]
+    volumes:
+      - ./src:/var/www/html
+```
+
+use artisan utility container: 
+`docker-compose run --rm artisan migrate`
+
+--- 
+
+Problem: connection refused  
+
+Solution:  
+https://www.udemy.com/course/docker-kubernetes-the-practical-guide/learn/lecture/22167198#questions/14040174
+
+- make sure everything is stopped
+`docker-compose down`
+
+- create your laravel project
+`docker-compose run --rm composer create-project --prefer-dist laravel/laravel .`
+  
+- launch your containers with --build to make sure you're getting the latest images
+`docker-compose up -d --build server`
+
+---
+
