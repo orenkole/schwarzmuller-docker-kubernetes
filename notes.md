@@ -1616,14 +1616,26 @@ Problem: connection refused
 Solution:  
 https://www.udemy.com/course/docker-kubernetes-the-practical-guide/learn/lecture/22167198#questions/14040174
 
-- make sure everything is stopped
+- make sure everything is stopped  
 `docker-compose down`
 
-- create your laravel project
+- create your laravel project  
 `docker-compose run --rm composer create-project --prefer-dist laravel/laravel .`
   
-- launch your containers with --build to make sure you're getting the latest images
+- launch your containers with --build to make sure you're getting the latest images  
 `docker-compose up -d --build server`
 
 ---
 
+## Docker Compose with and without Dockerfiles
+
+Adding dockerfile to docker-compose (like `entrypoint`, `working_dir`)
+
+In docker-compose we don't have some commands that we have in dockerfile:
+like `COPY`, `RUN`, etc.
+
+Keep in mind: bind mount are great for development, not an option for deployment  
+Because in production we don't have local folders like `/src`, `./nginx/nginx.conf` etc  
+The idea of the bind mound is that our latest source code during development is directly exposed to a container  
+
+For deployment we want to create an image with our source code, we copy a snapshot of the source code
