@@ -13,8 +13,8 @@ services:
       - mysql
   php:
     build:
-      context: ./dockerfiles
-      dockerfile: php.dockerfile
+      context: .
+      dockerfile: dockerfiles/php.dockerfile
     volumes:
       - ./src:/var/www.html:delegated
   mysql:
