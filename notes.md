@@ -1440,3 +1440,52 @@ _docker-compose.yml_ (mysql part):
     env_file:
       - ./env/mysql.env
 ```
+
+## Adding a Composer Utility Container
+
+Add _/dockerfiles/composer.dockerfile_  
+```dockerfile
+FROM composer:latest
+WORKDIR /var/www/html
+ENTRYPOINT ["composer", "--ignore-platform-reqs"]
+```
+_docker-compose.yml_ (composer part): 
+```yaml
+  composer:
+    build:
+      context: ./dockerfiles
+      dockerfile: composer.dockerfile
+    volumes:
+      - ./src:var/www/html
+```
+
+---
+
+_docker-composer.yml_ (all)
+```yml
+version: '3.8'
+
+services:
+  server:
+    image: 'nginx:stable-alpine'
+    ports:
+      - '8000:80'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  php:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www.html:delegated
+  mysql:
+    image: 'mysql:5.7'
+    env_file:
+      - ./env/mysql.env
+  composer:
+    build:
+      context: ./dockerfiles
+      dockerfile: composer.dockerfile
+    volumes:
+      - ./src:var/www/html
+```
