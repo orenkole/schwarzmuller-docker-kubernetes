@@ -1334,3 +1334,23 @@ docker build
 Also, we can run npm install in this utility container:  
 `docker run -it -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/utility-containers:/app mynpm install`  
 
+## Using Docker Compose
+(command)  
+`docker-compose run <service name> <command>` - allows us to run single service from docker-compose.yml by service name  
+Here `npm` is a name of service and `init` is a command:  
+`docker-compose run --rm npm init`  
+
+_docker-compose.yml_  
+```yml
+version: '3.8'
+services:
+  npm:
+    build: ./
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/app
+```
+
+
+
