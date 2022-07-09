@@ -1422,3 +1422,21 @@ _docker-compose.yml_ (php part):
     volumes:
       - ./src:/var/www.html:delegated
 ```
+
+## Adding a MySQL Container
+
+configure environment from documentation https://hub.docker.com/_/mysql  
+_/env/mysql.env
+```dotenv
+MYSQL_DATABASE=homestead
+DEFAULT_USER=homestead
+MYSQL_PASSWORD=secret
+MYSQL_ROOT_PASSWORD=secret
+```
+_docker-compose.yml_ (mysql part):
+```yml
+  mysql:
+    image: 'mysql:5.7'
+    env_file:
+      - ./env/mysql.env
+```
