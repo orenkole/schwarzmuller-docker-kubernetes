@@ -1352,5 +1352,29 @@ services:
       - ./:/app
 ```
 
+# Section 8. A more complex setup: a Laravel & PHP dockerized project
 
+## The Target Setup
+
+We'll have 6 containers:
+![img.png](notes-images/target_setup_1.png)
+
+## Adding a Nginx (Web Server) Container
+
+_ports, volumes_ from nginx image documentation
+`:ro` - read only  
+_docker-compose.yml_  
+```yml
+version: '3.8'
+
+services:
+  server:
+    image: 'nginx:stable-alpine'
+    ports:
+      - '8000:80'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+```
+
+add _./nginx/nginx.conf_  
 
