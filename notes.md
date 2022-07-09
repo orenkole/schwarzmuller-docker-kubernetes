@@ -1286,3 +1286,22 @@ We can also overwrite default command (command)
 `docker run -it node <our command>`  
 `docker run -it node npm init`  
 
+## Building a First Utility Container
+
+./utility-containers/Dockerfile
+```dockerfile
+FROM node:14-alpine
+WORKDIR /app
+```
+`docker build -t node-util`
+`docker run -it node-util npm init`
+
+We want to create a project on our host machine with the help of a container. Mirror container to our host machine
+Utility container - we can use it to execute something that affects our host machine without installing extra tools
+Use bind mount
+
+`docker run -it -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/utility-containers:/app node-util npm init`
+
+We've got a package.json on our host machine.  
+
+
