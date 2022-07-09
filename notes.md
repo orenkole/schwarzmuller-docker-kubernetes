@@ -1378,3 +1378,47 @@ services:
 
 add _./nginx/nginx.conf_  
 
+## Adding a PHP Container
+
+_/dockerfiles/php.dockerfile_
+```dockerfile
+FROM php:7.4-fpm-alpine
+WORKDIR /var/www/html
+RUN docker-php-ext-install pdo pdo-mysql
+```
+
+Here we don't have CMD - command of base image will be executed - invokes php interpreter  
+
+Our php container must be able to reach our source code inside /var/www/html - we need bind mount  
+Create folder for our code on our host machine  _src_ for our code  
+```yml
+  php:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www.html:delegated
+```
+`delegated` - if the container writes some data, it shouldn't instantly be written to our host machine. It's not necessary, it's optimization
+
+---
+
+Port: we defined it in nginx.conf:  
+`php` - name of service  
+```nginx configuration
+        fastcgi_pass php:3000;
+```
+From documentation php image exposes port 9000. Change port to 9000 in nginx.config  
+```nginx configuration
+        fastcgi_pass php:9000;
+```
+
+_docker-compose.yml_ (php part):  
+```yaml
+  php:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www.html:delegated
+```
