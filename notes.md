@@ -1247,3 +1247,42 @@ services:
   mongodb:
     container_name: mongodb
 ```
+## Module summary
+
+docker-compose only partially substitutes `docker run` and `docker build`
+
+# Section 7. Working with "utility containers" & executing commands in containers
+
+## Module Introduction & What are "Utility Containers"?
+
+_Application container_ - our application code + environment needed to run our code  
+
+_Utility containers_ is not an official term, just Max's. Only have certain environment (node, php) in them.
+They don't an application when we run them. We run them in conjunction with some command to run certain task.
+
+![img.png](notes-images/unitility_containers_1.png)
+
+## Utility Containers: Why would you use them?
+
+Earlier we had to download package.json from github
+
+To create projects we need extra tools installed on our host machine, like _node_ to executed `npm init`
+
+## Different Ways of Running Commands in Containers
+Note: You can always run `docker container attach <container name>` to attach yourself to the container after it was started
+Example:
+run official node container:
+`docker run -it node`  
+
+---
+(command)  
+`docker exec -it <container name> <command>` - allows to run commands inside our container besides the default commands (specified in dockerfile) the container executes
+
+`docker run -it -d node`
+`docker ps`
+`docker exec -it <container name> npm init`  
+
+We can also overwrite default command (command)  
+`docker run -it node <our command>`  
+`docker run -it node npm init`  
+
