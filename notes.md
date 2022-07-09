@@ -1196,3 +1196,40 @@ These _service_ names are the names we can use to send requests and to leverage 
 ---
 
 `docker compose down`
+
+## Adding Another Container
+
+```
+docker run \  
+    -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/docker-complete/frontend/src/app/src \  
+    --name goals-frontend \  
+    --rm \  
+    -d \  
+    -p 3000:3000 \  
+    -it \  
+    goals-react
+```
+
+`-it` means:
+- i - open input connection  
+- t - attach terminal  
+=>
+```yml
+  stdin_open: true
+  tty: true
+```
+Frontend part of _docker-compose.yml_
+```yml
+  frontend:
+    build: ./frontend
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend/src:/app/src
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+```
+
+`docker-compose up`  
