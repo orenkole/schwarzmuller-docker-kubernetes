@@ -1233,3 +1233,17 @@ Frontend part of _docker-compose.yml_
 ```
 
 `docker-compose up`  
+
+## Building Images & Understanding Container Names
+
+`docker-compose up --build` - force image rebuild  (command)
+`docker-compose build` - just build images, without running containers
+
+---
+
+To set name of a container `container_name`:
+```yml
+services:
+  mongodb:
+    container_name: mongodb
+```
