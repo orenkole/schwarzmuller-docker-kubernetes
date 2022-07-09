@@ -1382,7 +1382,7 @@ add _./nginx/nginx.conf_
 
 _/dockerfiles/php.dockerfile_
 ```dockerfile
-FROM php:7.4-fpm-alpine
+FROM php:8.0-fpm
 WORKDIR /var/www/html
 RUN docker-php-ext-install pdo pdo-mysql
 ```
@@ -1499,3 +1499,80 @@ rest - command that is executable inside composer container
 
 Root project will be created in container inside WORKDIR and thanks to bind mount will be reflected in the _src_ folder on our host machine  
 
+## Launching Only Some Docker Compose Services
+
+There is a laravel project created in our _src_     
+Part responsible for connection to mySQL database:  
+_/src/.env_  
+```dotenv
+DB_CONNECTION=mysql # +
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+```
+Using /env/mysqml.env data change to:  
+_/src/.env_
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=mysql # +
+DB_PORT=3306
+DB_DATABASE=homestead # +
+DB_USERNAME=homestead # +
+DB_PASSWORD=secret # +
+```
+
+Run application:  
+Path or request: _server => php => mysql_  
+We need in _server_ expose extra volume, bind mount:  
+In _nginx.config_ we're looking for files in:  
+_/nginx/nginx.conf_
+```nginx configuration
+root /var/www/html/public;
+```
+_docker-compose.yml_
+```yml
+  server:
+    image: 'nginx:stable-alpine'
+    ports:
+      - '8000:80'
+    volumes:
+      - ./src:/var/www/html # expose files
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+```
+---
+Fix:  
+```yaml
+  server:
+    image: 'nginx:stable-alpine'
+    ports:
+      - '8000:80'
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro # fix path in container
+```
+Run only _server, php, mysql_ services (command):  
+`docker-compose down`  
+```zsh
+docker-compose up -d server php mysql
+```
+
+---
+
+Use:  
+```yml
+  server:
+    depends_on:
+      - php
+      - mysql
+```
+Now we can write:  
+`docker-compose up server`  
+
+---
+
+For now docker compose doesn't rebuild our images  
+We want docker compose to evaluate our dockerfiles and build images if it changed
+
+`docker-compose up -d --build server`
