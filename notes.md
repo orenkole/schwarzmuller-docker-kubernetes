@@ -1294,7 +1294,6 @@ FROM node:14-alpine
 WORKDIR /app
 ```
 `docker build -t node-util`
-`docker run -it node-util npm init`
 
 We want to create a project on our host machine with the help of a container. Mirror container to our host machine
 Utility container - we can use it to execute something that affects our host machine without installing extra tools
@@ -1304,4 +1303,34 @@ Use bind mount
 
 We've got a package.json on our host machine.  
 
+## Utilizing ENTRYPOINT
+Restrict command we can run
+
+With CMD in Dockerfile our command after image name overwrites CMD
+`docker run -it -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/utility-containers:/app node-util npm init`  
+Here `npm init` overwrites 
+```dockerfile
+CMD ['...', '...']
+```
+
+For `ENTRYPOINT` everything in command in `docker run ... <command>` is appended to `ENTRYPOINT`  
+_Dockerfile_
+```dockerfile
+FROM node:14-alpine
+WORKDIR /app
+ENTRYPOINT ["npm"]
+```
+`docker build -t mynpm` 
+```
+docker build
+    -t mynpm \  
+    docker \  
+    run \  
+    -it \  
+    -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/utility-containers:/app \  
+    mynpm \  
+    init # just init, not npm init
+```  
+Also, we can run npm install in this utility container:  
+`docker run -it -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/utility-containers:/app mynpm install`  
 
