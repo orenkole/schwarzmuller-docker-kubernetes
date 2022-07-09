@@ -1076,3 +1076,123 @@ Note: it doesn't remove volumes. To remove volumes add `-v`:
 ```
 docker-compose down -v
 ```
+
+## Working with Multiple Containers
+We can specify image if we have one:  
+```yml
+    image: 'goals-node'
+```
+
+or if we don't have one, we specify how to build image:  
+Tell where is the docker file needed:  
+```yml
+    build: ./backend
+```
+or variant with more options:
+```yml
+  backend:
+    context: ./backend
+    dockerfile: Dockerfile
+    args:
+      some-arg: 1
+```
+`context` - is a path to where the image will be generated - sould be set to a folder which includes everything the Dockerfile might be referring to:
+![img.png](notes-images/6_working_with_multiple_containers-1.png)
+
+---
+
+Our command:
+```
+docker run \  
+ --name goals-backend \  
+  -v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/docker-complete/backend:/app \  
+  -v logs:/app/logs \  
+  -v /app/node_modules \  
+  -e MONGODB_USERNAME=max \  
+  -e MONGODB_PASSWORD=secret \
+  -d \  
+  --rm \  
+  -p 80:80 \  
+  --network goals-network \  
+  goals-node
+```
+`-d`, `--rm`, `-network` are configured by default  
+
+Named volumes:  
+Name volumes `-v logs:/app/logs` must be specified also in `volumes` section of docker-compose.yml:  
+```yml
+services:
+#  ...
+  backend:
+#    ...
+      - '80:80'
+    volumes:
+      - logs:/app/logs
+
+volumes:
+  logs:
+```
+
+Bind mount:  
+In docker-compose.yml we are allowed instead of absolute path to use relative path to _docker-compose.yml_ file
+`-v /Users/badger/Desktop/study/schwarzmuller-docker-kubernetes/docker-complete/backend:/app`
+=> 
+```yml
+    volumes:
+      - ./backend:/app
+```
+
+Anonymous volumes:  
+just add to a list:
+```yml
+    volumes:
+#     ...
+      - /app/node_modules
+```
+
+Environment variables:  
+```yaml
+    env_file:
+      - ./env/backend.env
+```
+
+`depends_on` - list of containers current container depends on
+
+_docker_compose.yml_ (backend part)
+```yml
+version: "3.8"
+services:
+# ...
+  backend:
+    build: ./backend
+    ports:
+      - '80:80'
+    volumes:
+      - logs:/app/logs
+      - ./backend:/app
+      - /app/node_modules
+    env_file:
+      - ./env/backend.env
+    depends_on:
+      - mongodb
+
+volumes:
+# ...
+  logs:
+```
+
+`docker-compose up`
+![img.png](notes-images/working_with_multiple_containers_1.png)
+
+Note: composer named our containers _docker-complete-backend-1_ and _docker-complete-mongodb-1_
+But we still can reference our containers as they are named in _docker-compose.yml_ file:
+`mongodb:27017`  
+```javascript
+mongoose.connect(
+  `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@mongodb:27017/course-goals?authSource=admin`,
+```
+These _service_ names are the names we can use to send requests and to leverage the network docker-compose creates for us.  
+
+---
+
+`docker compose down`
