@@ -1732,3 +1732,48 @@ We shouldn't use bind mounts in production
 
 ## Getting Started With An Example
 ![img.png](notes-images/getting_started_1.png)
+
+`docker build -t node-dep-example .`  
+`docker run -d --rm --name node-dep -p 80:80 node-dep-example`  
+![img.png](notes-images/getting_started_2.png)
+
+## Bind Mounts In Production
+We use `COPY` instead of bind mounts for production  
+Because we don't setup environment in production  
+![img.png](notes-images/bind_mounts_in_production.png)
+
+## Introducing AWS & EC2
+
+Find EC2 on AWS  
+
+## Connecting to an EC2 Instance
+
+- launch instance: Amazon Linux 2 AMI  
+- make sure vpc option is configured  
+- press 'review and launch'  
+- create new key pair (to run commands later), name: 'schwarzmuller-example-1'
+- save key file  ('code' folder)
+- press `launch instance`  
+
+---
+
+Note: on Windows or use wsl2 or putty
+
+---
+
+connect => choose 'SSH client'  
+
+![img.png](notes-images/connect.png)
+
+run command from folder where is the key file:  
+`chmod 400 schwarzmuller-example-1.pem`  
+`ssh -i "schwarzmuller-example-1.pem" ec2-user@ec2-18-197-177-8.eu-central-1.compute.amazonaws.com`  
+
+Now all comands from this terminal will be executed on the remote machine  
+
+Now left:  
+- install docker
+- get image on remote machine
+- run container  
+- configure security groups  
+
