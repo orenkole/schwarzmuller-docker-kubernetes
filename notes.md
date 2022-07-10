@@ -1777,3 +1777,18 @@ Now left:
 - run container  
 - configure security groups  
 
+## Installing Docker on a Virtual Machine
+After connecting to EC2, update packages on remote machine:  
+`sudo yum update -y`  
+
+Install docker on remote machine:  
+`sudo amazon-linux-extras install docker`  
+
+Start docker:  
+`sudo service docker start`  
+
+Now we're able to run docker commands on remote machine  
+
+
+
+
