@@ -1861,3 +1861,14 @@ Go to terminal connected to AWS EC2
 ---
 
 Remove instance: actions => terminate
+
+## Disadvantages of our Current Approach
+
+![img.png](notes-images/disatvantages-1.png)
+
+## From Manual Deployment to Managed Services
+We'll use ECS, not EC2 
+
+![img.png](notes-images/manual_vs_manages-1.png)
+
+Now we don't install docker on remote machine, don't run docker commands  
