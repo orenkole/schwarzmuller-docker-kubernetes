@@ -1722,3 +1722,13 @@ For artisan also change context:
       context: .
       dockerfile: dockerfiles/php.dockerfile
 ```
+
+# Section 9. Deploying docker containers
+
+## From Development To Production
+
+We shouldn't use bind mounts in production  
+![img.png](notes-images/from_development_to_production_1.png)
+
+## Getting Started With An Example
+![img.png](notes-images/getting_started_1.png)
