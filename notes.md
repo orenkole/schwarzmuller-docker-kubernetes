@@ -1789,6 +1789,27 @@ Start docker:
 
 Now we're able to run docker commands on remote machine  
 
+## Pushing our local Image to the Cloud
+We have 2 options:  
+- we deploy our source code and build image on remote machine  
+- build image on local machine and on remote machine just build image
 
+![img.png](notes-images/pushing_image_1.png)
+
+We'll use docker hub and build image locally  
+
+create dockerhub repository `node-example-1`  
+
+build image locally:  
+`docker build -t node-dep-example-1 .`
+
+give a tag:  
+`docker tag node-dep-example-1 qb64kqjepetz1g/node-example-1`
+
+Login to dockerhub:  
+`docker login`  
+
+Push to dockerhub:  
+`docker push qb64kqjepetz1g/node-example-1`  
 
 
