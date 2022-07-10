@@ -1812,4 +1812,26 @@ Login to dockerhub:
 Push to dockerhub:  
 `docker push qb64kqjepetz1g/node-example-1`  
 
+## Running & Publishing the App (on EC2)
+`sudo docker run -d --rm -p 80:80 qb64kqjepetz1g/node-example-1`
+`sudo docker ps`  
 
+By default our app on remote AWS machine our instance is closed to connection  
+Utilize security gruops  
+
+See security group in instance list  
+Go to security groups list, change inbound rule. 
+By default, only SSH port range 22 is open to entire world. Key file allow SSH connection.  
+We need to allow http traffic  
+Edit inbound rule  => http, enywhere => update  
+
+Now in list of instances take public ip address and see in  the browser  
+
+![img.png](notes-images/instance.png)
+
+Note: we didn't have to install _node_ on remote machine, only docker  
+
+---
+
+Note: in production we don't want build images, we only want to use finished images.
+Later we won't use docker-compose in our instance  
