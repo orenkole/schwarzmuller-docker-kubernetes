@@ -1639,3 +1639,86 @@ Because in production we don't have local folders like `/src`, `./nginx/nginx.co
 The idea of the bind mound is that our latest source code during development is directly exposed to a container  
 
 For deployment we want to create an image with our source code, we copy a snapshot of the source code
+
+## Bind Mounts and COPY: When To Use What
+
+To copy source code and configuration in the image when it' built  
+When we later deploy that image it already contains source code and configuration  
+
+For development we use bind mount in docker-composer.yml  
+For deployment we use commands to build image in nginx.dockerfile  
+We don't have to specify CMD because official image already has a default command to start nginx server  
+_/dockerfiles/nginx.dockerfile_
+```dockerfile
+FROM nginx:stable-alpine
+# Copy configuration file
+WORKDIR /etc/nginx/conf.d
+COPY nginx/nginx.conf .
+RUN mv nginx.conf default.conf
+# Copy source code
+WORKDIR /var/www/html
+COPY src .
+```
+
+use our custom image in docker-compose.yml  
+Note: `context` sets path to where to look a dockerfile and also where to build dockerfile.  
+But we need our `context` to be on the upper level of all folders it needs
+_docker-compose.yml_
+```yml
+  server:
+    # image: 'nginx:stable-alpine'
+    build:
+      context: .
+      dockerfile: dockerfiles/nginx.dockerfile
+```
+
+---
+
+We also need to tweek php dockerfile to get a snapshot of source code for deployment:  
+_/dockerfiles/php.dockerfile_
+```dockerfile
+COPY src .
+```
+
+---
+
+Now try to run docker-compose without volumes: we'll have snapshots, but updates in our code won't be reflected:
+```yml
+  server:
+...
+#    volumes:
+#      - ./src:/var/www/html
+#      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+...
+  php:
+...
+#    volumes:
+#      - ./src:/var/www/html:delegated
+```
+
+Now we can run a container:  
+`docker-compose up -d --build server`
+
+---
+
+Note image can restrict read and write to container: 
+We can't execute `COPY` with some images  
+This wasn't a problem with bind mount but a problem when working only inside container  
+We can grant access  to write to certain folders 
+_/dockerfiles/php.dockerfile_
+```dockerfile
+RUN chown -R www-data:www-data /var/www/html
+```
+
+`www-data` - default user of the image  
+Thus Laravel will have access to write to folder `/var/www/html` as a `www-data` user  
+
+---
+
+For artisan also change context:
+```yml
+  artisan:
+    build:
+      context: .
+      dockerfile: dockerfiles/php.dockerfile
+```
