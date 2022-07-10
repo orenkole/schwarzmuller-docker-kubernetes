@@ -1835,3 +1835,29 @@ Note: we didn't have to install _node_ on remote machine, only docker
 
 Note: in production we don't want build images, we only want to use finished images.
 Later we won't use docker-compose in our instance  
+
+## Managing & Updating the Container / Image
+
+- Rebuild image:  
+`docker build -t node-dep-example-1 .`
+  
+- Tag image appropriately to push do dockerhub:
+`docker tag node-dep-example-1 qb64kqjepetz1g/node-example-1`  
+
+- Push to dockerhub  
+`docker push qb64kqjepetz1g/node-example-1`  
+  
+Go to terminal connected to AWS EC2
+
+- Stop running container:  
+`sudo docker stop <container name>`  
+
+- Pull image from docker hub  
+`sudo docker pull qb64kqjepetz1g/node-example-1`  
+  
+- Run container:  
+`sudo docker run -d --rm -p 80:80 qb64kqjepetz1g/node-example-1`
+  
+---
+
+Remove instance: actions => terminate
