@@ -254,6 +254,12 @@ We need `-i` because of interactive mode
 `docker rmi <image id>` - remove image. Can be removed only if not use by any container (including stopped containers)
 `docker image prune -a` - remove all unused images
 
+```
+docker kill $(docker ps -q)
+docker rm $(docker ps -a -q)
+docker rmi $(docker images -q)
+```
+
 ## Removing stopped containers automatically
 `docker run -p 3000:80 -d --rm <image name>`
 `--rm` - remove container once stopped
@@ -1872,3 +1878,33 @@ We'll use ECS, not EC2
 ![img.png](notes-images/manual_vs_manages-1.png)
 
 Now we don't install docker on remote machine, don't run docker commands  
+
+## Deploying with AWS ECS: A Managed Docker Container Service
+
+We can configure container (name, env variables, etc)
+
+**Task** - is a remote machin able to run multiple containers (like EC2 instance)
+
+FARGATE - mode where for every request container is ran, executed and than shutted down (serverless mode)
+
+**Service** - defines how _Task_ should be executed 
+
+**Cluster** - overall network for our services  
+![img.png](notes-images/ecs-1.png)
+We've configured how AWS should run our containers, advantages:
+- we didn't start any custom service of machines,
+- we didn't install anything, 
+- we're not responsible for keeping everything up to date 
+We've got public IP where we can map our domain
+![img.png](notes-images/ecs-2.png)
+
+## Updating Managed Containers
+- update code
+- build image
+- tag image
+- push image to docker hub  
+- on AWS go to clusters => tasks => click 'create new revision' => click 'create' => click 'upddate service'  
+or  
+  'update service' => 'force new deployment'  
+  
+public ip is changed
