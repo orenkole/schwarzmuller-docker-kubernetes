@@ -2111,3 +2111,11 @@ Kubelet - communication device between master node and worker node
 
 ![img.png](notes-images/terms.png)
 
+# Section 12. Kubernetes in action - diving into the core concepts
+Kubernetes will not take care of infrastructure, it just ensures that handles pods running  
+
+We need create clusters and nodes ourselves  
+![img.png](notes-images/kubernetes-dos.png)
+
+**Kubermatic** - helper to create infrastructure   
+Amazon elastic kubernetes service - allows to not use aws specific kubernetes configuration  
