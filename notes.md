@@ -2119,3 +2119,38 @@ We need create clusters and nodes ourselves
 
 **Kubermatic** - helper to create infrastructure   
 Amazon elastic kubernetes service - allows to not use aws specific kubernetes configuration  
+
+## Kubernetes: Required Setup & Installation Steps
+
+![img.png](notes-images/kubernetes-installation-1.png)
+
+**Minikube** - install locally to create cluster on local machine  
+Creates a virtual machine with cluster inside with single node cluster (worker and master node are combined into one single virtual machine)  
+
+Minikube is for local testing of cubernetes  
+
+## macOS Setup
+https://kubernetes.io/ru/docs/tasks/tools/install-minikube/
+https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/#%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-kubectl-%D0%B2-macos
+  
+`brew install kubectl`  
+
+Install Hypervisor to create virtual machine  
+
+Install Minikube `brew install minikube`
+
+![img.png](notes-images/vm-driver.png)
+
+https://stackoverflow.com/questions/26647412/homebrew-could-not-symlink-usr-local-bin-is-not-writable
+
+`sudo chown -R $(whoami) /usr/local`
+`brew link minikube`
+restart computer.  
+
+Check installation: tell minicube to use virtualbox to create a demo cluster:  
+`minikube start --vm-driver=virtualbox`  
+Sets up virtual machine, kubernetes cluster in virtual machine, master node, install all software master node needs, install all worker nodes software  
+`minikube status` (all running)  
+
+`minikube dashboard`  
+![img.png](notes-images/kubernetes-dashboard.png)
