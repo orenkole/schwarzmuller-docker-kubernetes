@@ -1908,3 +1908,54 @@ or
   'update service' => 'force new deployment'  
   
 public ip is changed
+
+## Preparing a Multi-Container App
+
+We're not going to use docker-compose on deployment  
+docker-compose.yml has no info needed for cloud service providers  
+docker-compose.yml is for development  
+
+We'll inspire from docker-compose and manyally deploy containers to AWS  
+
+---
+
+For cloud we're not able to use service name from docker-compose as a domain in our code  
+```yml
+services:
+  mongodb:
+    image: 'mongo'
+```
+
+```javascript
+mongoose.connect(
+  `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}:27017/course-goals?authSource=admin`,
+```
+
+Because locally everything runs on one machine and can be placed in one network  
+
+On cloud if containers are added in the same task they are guaranteed to run on one machine - we can use `localhost`.  
+
+To distinct between local and cloud use env  
+```javascript
+mongoose.connect(
+  `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}:27017/course-goals?authSource=admin`,
+```
+
+_backend.env_  
+```dotenv
+MONGODB_URL=mongodb
+```
+
+create image  
+`docker build -t goals-node ./backend`
+
+create new repository on dockerhub  
+_<repository>/goals-node_  
+
+give a tag:  
+`docker tag goals-node academind/goals-node`  
+
+push to repository:  
+`docker push academind/goals-node`
+
+
