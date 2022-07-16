@@ -11,16 +11,17 @@ Linux operating systems natively support containers
 launch docker daemon
 
 _Dockerfile_
+
 ```dockerfile
 FROM node:14
 
 WORKDIR /app
 
-COPY package.json .
+COPY ../../../package.json .
 
 RUN npm install
 
-COPY . .
+COPY .. .
 
 EXPOSE 3000
 
@@ -792,7 +793,7 @@ rebuild image:
 
 `docker run --name goals-frontend --rm -d --network goals-network -p 3000:3000 -it goals-react`
 
-![img.png](adding-docker-network-1.png)
+![img.png](notes-images/adding-docker-network-1.png)
 
 This is because our code runs in the browser and browser doesn't know about `http://goals-backend/goals`
 We must return to `localhost` and to ensure that endpoints can be reached
@@ -1993,3 +1994,98 @@ MONGODB_PASSWORD=secret
 MONGODB_URL=localhost
 ```
 click 'add'  
+
+## Deploying a Second Container & A Load Balancer
+
+On the same _task_ definition add another container  
+- name: _mongodb_
+- image: _mongo_ (according to official name)  
+- port: 27017
+- environment variable from _mongo.env_ copy to environment variables 
+- 'add'
+
+click 'crate' task definition  
+
+---
+
+Go to 'clusters', click 'create' on _services_ tab, then:
+- choose FARGATE
+- choose 'goals' task definition
+- service name: _goals-service_
+- number of tasks: 1
+- click 'next'
+
+On _configure network_:
+- choose VPC appropriate
+- choose both subnets
+- auto-assign public UP: 'enabled'
+- load balancer type: 'Application load balancer'
+
+Go to EC2 console
+- create http/https 
+- name: 'ecs-lb'
+- internet
+- port: 80
+- choose VPC
+
+//...
+
+## Introducing Multi-Stage Builds
+
+Dockerfile uses several FROM
+Frontend image has to first build and then serve
+
+_frontend/Dockerfile.prod_
+```dockerfile
+FROM node:14-alpine as build
+
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+FROM nginx:stable-alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+# Section 11. Getting started with kubernetes
+
+## More Problems with Manual Deployment
+![img.png](notes-images/manual-deployment-problems.png)
+
+## Why Kubernetes?
+
+![img.png](notes-images/ecs-can-help.png)
+![img.png](notes-images/ecs-issues.png)
+
+Kubernetes configuration is supported by cloud providers or on our machines we can install some software to support kubernetes configuration  
+![img.png](notes-images/kubernets-1.png)
+
+We can merge certain cloud-specific configurations in kubernetes file  
+If we move to another cloud provider we only need to remove cloud provider specifi parts  
+![img_1.png](notes-images/kubernets-2.png)
+![img.png](notes-images/kubernetes-3.png)
+
+**Kubernetes is like docker-compose for multiple machines**
+
+## Kubernetes: Architecture & Core Concepts
+
+Pod - can container one or more containers  
+Worker node - runs containers, like virtual machine  
+One worker node can run multiple pods  
+Proxy - defines communication between pod and outside world  
+
+Master node - controls worker nodes, we interact with master node (control play)  
+Cluster 
+![img.png](notes-images/kubernetes-concepts.png)
+
