@@ -1958,4 +1958,38 @@ give a tag:
 push to repository:  
 `docker push academind/goals-node`
 
+## Configuring the NodeJS Backend Container
 
+On AWS:  
+- _'create cluster'_
+- choose _'networking only'_
+- _'next'_
+- give a name
+- check _'create VPC'_
+- click _'create'_
+- click _'view cluster'_
+
+Go to _'task definitions'_  
+- 'create'
+- choose FARGATE
+- give a name, task role: 'ecsTaskExecution', choose memory an cpu sizes
+
+click 'add container'  
+- give name
+- image: docker repository, port: 80, command: 'node,app.js'
+
+add env to:
+_docker-complete/backend/Dockerfile_
+```dockerfile
+ENV MONGODB_URL=mongodb
+```
+
+rebuild image  
+
+on AWS continue add keys (note _localhost_):  
+```dotenv
+MONGODB_USERNAME=max
+MONGODB_PASSWORD=secret
+MONGODB_URL=localhost
+```
+click 'add'  
