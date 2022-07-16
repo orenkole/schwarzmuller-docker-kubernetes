@@ -2089,3 +2089,25 @@ Master node - controls worker nodes, we interact with master node (control play)
 Cluster 
 ![img.png](notes-images/kubernetes-concepts.png)
 
+## Kubernetes will NOT manage your Infrastructure!
+![img.png](notes-images/kubernetes-donts.png)
+
+## A Closer Look at the Worker Nodes
+Worker node is like a machine  
+Docker must be installed on workder node  
+Kubelet - communication device between master node and worker node  
+
+![img.png](notes-images/workder-node.png)
+
+## A Closer Look at the Master Node
+- API server  
+- scheduler
+- kube controller manager
+- cloud controller manager
+
+![img.png](notes-images/mater-node.png)
+
+## Important Terms & Concepts
+
+![img.png](notes-images/terms.png)
+
