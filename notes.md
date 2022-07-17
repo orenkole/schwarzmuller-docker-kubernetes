@@ -2154,3 +2154,5 @@ Sets up virtual machine, kubernetes cluster in virtual machine, master node, ins
 
 `minikube dashboard`  
 ![img.png](notes-images/kubernetes-dashboard.png)
+
+## Understanding Kubernetes Objects (Resources)
